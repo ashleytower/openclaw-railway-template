@@ -1,0 +1,47 @@
+name: Sync OpenClaw Updates
+
+on:
+  schedule:
+    - cron: '0 9 * * 0'  # Every Sunday at 9am UTC (4am EST)
+  workflow_dispatch:  # Manual trigger option
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "Max (AI Employee)"
+          git config user.email "max@mtlcraftcocktails.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/arjunkomath/openclaw-railway-template.git || true
+
+      - name: Fetch upstream
+        run: git fetch upstream
+
+      - name: Merge upstream changes
+        run: |
+          git checkout main
+          # Merge upstream but keep our workspace files on conflict
+          git merge upstream/main -X ours --no-edit || {
+            echo "Merge had conflicts, resolving by keeping our workspace files"
+            git checkout --ours workspace/
+            git add workspace/
+            git commit -m "Merge upstream, keeping custom workspace files"
+          }
+
+      - name: Push changes
+        run: git push origin main
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Sync failed - manual intervention may be needed"
