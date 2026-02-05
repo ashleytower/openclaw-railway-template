@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "rube": {
+      "baseUrl": "https://rube.app/mcp",
+      "headers": {
+        "Authorization": "Bearer ${RUBE_TOKEN}"
+      },
+      "description": "Rube MCP - 500+ app integrations"
+    }
+  }
+}

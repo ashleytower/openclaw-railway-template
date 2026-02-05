@@ -4,31 +4,22 @@
 
 ## The One Rule
 
-Before saying "I don't know", use Rube to search:
+Before saying "I don't know", use mcporter to search:
 
 ```bash
-# Find the right tool
-node ~/.openclaw/skills/rube/scripts/rube.mjs search "what you need"
-
-# Execute it
-node ~/.openclaw/skills/rube/scripts/rube.mjs execute TOOL_SLUG '{"arg":"value"}'
+mcporter call rube.TOOL_NAME arg1=value1 arg2=value2
 ```
 
-## Common Lookups
+## Common Tools
 
-| Need | Tool |
-|------|------|
-| Memory/facts | `MEM0_PERFORM_SEMANTIC_SEARCH_ON_MEMORIES` (user_id: `max`) |
-| Recipes | `SUPABASE_BETA_RUN_SQL_QUERY` (ref: `clnxmkbqdwtyywmgtnjj`) |
-| Instagram DMs | `INSTAGRAM_LIST_ALL_CONVERSATIONS` |
-| Emails | `GMAIL_FETCH_EMAILS` |
-| Calendar | `GOOGLECALENDAR_LIST_EVENTS` |
-
-## Store New Facts
-
-```bash
-node ~/.openclaw/skills/rube/scripts/rube.mjs execute MEM0_ADD_MEMORY '{"memory":"<fact>","user_id":"max"}'
-```
+| Need | Command |
+|------|---------|
+| Search memory | `mcporter call rube.MEM0_PERFORM_SEMANTIC_SEARCH_ON_MEMORIES query="topic" user_id=max` |
+| Store fact | `mcporter call rube.MEM0_ADD_MEMORY memory="fact" user_id=max` |
+| Query recipes | `mcporter call rube.SUPABASE_BETA_RUN_SQL_QUERY ref=clnxmkbqdwtyywmgtnjj query="SELECT * FROM cocktail_recipes" read_only=true` |
+| Instagram DMs | `mcporter call rube.INSTAGRAM_LIST_ALL_CONVERSATIONS` |
+| Emails | `mcporter call rube.GMAIL_FETCH_EMAILS` |
+| Calendar | `mcporter call rube.GOOGLECALENDAR_LIST_EVENTS` |
 
 ## Key Info
 
