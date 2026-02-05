@@ -103,6 +103,22 @@ function isConfigured() {
   }
 }
 
+function cleanupConfig() {
+  const cfgPath = configPath();
+  try {
+    if (!fs.existsSync(cfgPath)) return;
+    const content = fs.readFileSync(cfgPath, "utf8");
+    const config = JSON.parse(content);
+    if (config.mcpServers) {
+      console.log("[config] Removing invalid mcpServers key from config");
+      delete config.mcpServers;
+      fs.writeFileSync(cfgPath, JSON.stringify(config, null, 2), "utf8");
+    }
+  } catch (err) {
+    console.warn(`[config] cleanup error: ${err.message}`);
+  }
+}
+
 let gatewayProc = null;
 let gatewayStarting = null;
 
@@ -147,8 +163,8 @@ async function startGateway() {
   fs.mkdirSync(STATE_DIR, { recursive: true });
   fs.mkdirSync(WORKSPACE_DIR, { recursive: true });
 
-  // Inject MCP servers before starting gateway
-  patchMcpServers();
+  // Clean up invalid mcpServers key if present (OpenClaw doesn't support it)
+  cleanupConfig();
 
   const args = [
     "gateway",
