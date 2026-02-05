@@ -103,43 +103,6 @@ function isConfigured() {
   }
 }
 
-// Inject Rube MCP server config if RUBE_TOKEN is set
-function patchMcpServers() {
-  const rubeToken = process.env.RUBE_TOKEN?.trim();
-  if (!rubeToken) {
-    console.log("[mcp] RUBE_TOKEN not set, skipping MCP config");
-    return;
-  }
-
-  try {
-    const cfgPath = configPath();
-    if (!fs.existsSync(cfgPath)) return;
-
-    const config = JSON.parse(fs.readFileSync(cfgPath, "utf8"));
-
-    // Check if mcpServers.rube already exists
-    if (config.mcpServers?.rube) {
-      console.log("[mcp] Rube MCP already configured");
-      return;
-    }
-
-    // Add mcpServers config
-    config.mcpServers = config.mcpServers || {};
-    config.mcpServers.rube = {
-      type: "http",
-      url: "https://rube.app/mcp",
-      headers: {
-        Authorization: `Bearer ${rubeToken}`
-      }
-    };
-
-    fs.writeFileSync(cfgPath, JSON.stringify(config, null, 2), "utf8");
-    console.log("[mcp] Injected Rube MCP server config");
-  } catch (err) {
-    console.warn(`[mcp] Failed to patch MCP config: ${err.message}`);
-  }
-}
-
 let gatewayProc = null;
 let gatewayStarting = null;
 
