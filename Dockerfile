@@ -5,6 +5,7 @@ RUN apt-get update \
     ca-certificates \
     curl \
     git \
+    gosu \
     procps \
     python3 \
     build-essential \
@@ -35,5 +36,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
   CMD curl -f http://localhost:8080/setup/healthz || exit 1
 
-USER openclaw
-CMD ["node", "src/server.js"]
+USER root
+ENTRYPOINT ["./entrypoint.sh"]
