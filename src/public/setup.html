@@ -278,9 +278,6 @@
             this.devicesPending = [];
             this.devicesPaired = [];
           }
-          if (j.raw) {
-            this.log += '[devices] ' + j.raw.trim() + '\n';
-          }
         } catch (e) {
           this.log += '✗ Failed to load devices: ' + String(e) + '\n';
         } finally {
@@ -346,8 +343,12 @@
         <img src="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/openclaw-logo-text.png" alt="OpenClaw" class="logo-img">
       </picture>
     </div>
-    <h1 class="page-title">Personal AI Assistant</h1>
-    <p class="page-subtitle">Configure your AI assistant in a few simple steps</p>
+    <div style="margin-bottom:1.5rem;padding:0.75rem 1rem;border:1px solid #ef4444;border-radius:0.5rem;background:var(--bg-card)">
+      <p style="font-size:0.75rem;color:var(--text-mid);line-height:1.5;margin:0">
+        <strong style="color:#ef4444">Important:</strong> This template exposes your OpenClaw gateway to the public internet. <strong style="color:var(--text)">Please read the <a href="https://docs.openclaw.ai/gateway/security" target="_blank" style="color:var(--text);text-decoration:underline">OpenClaw security documentation</a> before deploying.</strong> If you only use chat channels (Telegram, Discord, Slack) and don't need the gateway dashboard, you can remove the public endpoint from Railway after setup.
+      </p>
+    </div>
+
 
     <div class="card card-compact mb-6">
       <div class="card-header">

@@ -836,10 +836,18 @@ app.post("/setup/api/doctor", requireSetupAuth, async (_req, res) => {
 app.get("/setup/api/devices", requireSetupAuth, async (_req, res) => {
   const args = ["devices", "list", "--json", "--token", OPENCLAW_GATEWAY_TOKEN];
   const result = await runCmd(OPENCLAW_NODE, clawArgs(args));
+  log.info("devices", `list exit=${result.code} output=${result.output}`);
   try {
-    const data = JSON.parse(result.output);
+    const jsonMatch = result.output.match(/(\{[\s\S]*\}|\[[\s\S]*\])\s*$/);
+    if (!jsonMatch) {
+      log.warn("devices", "no JSON found in output");
+      return res.json({ ok: result.code === 0, raw: result.output });
+    }
+    const data = JSON.parse(jsonMatch[1]);
+    log.info("devices", `parsed keys=${Object.keys(data)} pending=${JSON.stringify(data.pending)} paired=${JSON.stringify(data.paired)}`);
     return res.json({ ok: true, data, raw: result.output });
-  } catch {
+  } catch (parseErr) {
+    log.warn("devices", `JSON parse failed: ${parseErr.message}`);
     return res.json({ ok: result.code === 0, raw: result.output });
   }
 });
@@ -1128,7 +1136,9 @@ const PROXY_ORIGIN = process.env.RAILWAY_PUBLIC_DOMAIN
   : GATEWAY_TARGET;
 
 proxy.on("proxyReq", (proxyReq, req, res) => {
-  proxyReq.setHeader("Authorization", `Bearer ${OPENCLAW_GATEWAY_TOKEN}`);
+  if (!req.url?.startsWith("/hooks/")) {
+    proxyReq.setHeader("Authorization", `Bearer ${OPENCLAW_GATEWAY_TOKEN}`);
+  }
   proxyReq.setHeader("Origin", PROXY_ORIGIN);
 });
 
